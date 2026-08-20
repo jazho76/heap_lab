@@ -22,12 +22,14 @@ ENV LANG=C.UTF-8
 
 WORKDIR /lab
 
-COPY Makefile /lab/Makefile
-COPY src/     /lab/src/
-COPY pwn.conf /home/user/.pwn.conf
-COPY gdbinit  /home/user/.gdbinit
+COPY Makefile      /lab/Makefile
+COPY src/          /lab/src/
+COPY pwn.conf      /home/user/.pwn.conf
+COPY gdbinit       /home/user/.gdbinit
+COPY entrypoint.sh /usr/local/bin/lab-entrypoint
 
 RUN make -C /lab build \
+    && chmod +x /usr/local/bin/lab-entrypoint \
     && chown -R user:user /lab \
     && chown user:user /home/user/.pwn.conf /home/user/.gdbinit
 USER user
@@ -36,4 +38,5 @@ RUN mkdir -p /home/user/.local/share /home/user/.local/state /home/user/.cache
 
 RUN for b in /lab/bin/*; do gdb --batch -ex quit "$b" >/dev/null 2>&1 || true; done
 
+ENTRYPOINT ["/usr/local/bin/lab-entrypoint"]
 CMD ["bash"]
