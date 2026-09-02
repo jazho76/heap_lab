@@ -1,7 +1,5 @@
 CC      := gcc
-CFLAGS  := -O0 -no-pie -fno-pie \
-           -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0 \
-           -fcf-protection=none
+CFLAGS  := -g
 LDFLAGS := -no-pie
 SRC_DIR := src
 BIN_DIR := bin
