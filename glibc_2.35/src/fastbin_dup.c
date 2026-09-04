@@ -1,5 +1,3 @@
-// from https://github.com/shellphish/how2heap
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
