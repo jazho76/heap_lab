@@ -1,23 +1,16 @@
 # Heap Lab
 
-Self-contained labs for ptmalloc misuse, one per glibc version.
+Just a heap lab for me to play with ptmalloc and glibc heap allocation internals.
 
-- `glibc_2.35/` — Ubuntu 22.04 (glibc 2.35)
-- `glibc_2.43/` — Ubuntu 26.04 (glibc 2.43)
+The examples in this repository are sourced from or based on [shellphish/how2heap](https://github.com/shellphish/how2heap).
 
-Each lab is independent. Build and run from within its directory:
+## Usage
 
-    cd glibc_2.35
-    ./build.sh      # build the image (heaplab-2.35)
-    ./run.sh        # build if needed, then attach the container
+Build and run from within its directory:
 
-## Sources and binaries
+```sh
+cd glibc_2.35
+./build.sh      # build the image (heaplab-2.35)
+./run.sh        # build if needed, then attach the container
+```
 
-`src/` is mounted read-write into the container, so editing a `.c` inside the
-container (or on the host) persists. Binaries are compiled from `src/*.c` into
-`/lab/bin/` (host-gitignored, rebuilt, never committed).
-
-The container rebuilds on attach, so `bin/` always tracks the current `src/`.
-Recompile manually anytime with `make -C /lab build`.
-
-Add a challenge by dropping a `.c` into a lab's `src/`; no other edits needed.
