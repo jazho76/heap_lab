@@ -10,8 +10,6 @@ gdbscript = """
     continue
 """
 
-target = 0x404300
-
 
 def protect_ptr(heap_addr, ptr):
     return (heap_addr >> 12) ^ ptr
