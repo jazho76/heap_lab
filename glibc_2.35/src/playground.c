@@ -8,6 +8,7 @@
 #define STACK_BUF_SIZE  0x100
 
 #define RESP "[*] "
+#define PROMPT "heap> "
 
 _Alignas(16) static unsigned char global_buf[GLOBAL_BUF_SIZE];
 
@@ -22,10 +23,16 @@ static void cmd_malloc(uint64_t size)
 	printf(RESP "%p\n", p);
 }
 
+static void cmd_calloc(uint64_t nmemb, uint64_t size)
+{
+	void *p = calloc(nmemb, size);
+	printf(RESP "%p\n", p);
+}
+
 static void cmd_free(uint64_t addr)
 {
 	free((void *)(uintptr_t) addr);
-	printf(RESP "freed\n");
+	printf(RESP "freed %p\n", (void *)(uintptr_t) addr);
 }
 
 static size_t read_exact(void *buf, size_t len)
@@ -58,6 +65,7 @@ static void usage(void)
 	printf(RESP
 		"commands (addresses/sizes hex):\n"
 		"  malloc <size>\n"
+		"  calloc <nmemb> <size>\n"
 		"  free   <addr>\n"
 		"  write  <addr> <len>   then send <len> raw bytes on stdin\n"
 		"  read   <addr> <len>   emits <len> raw bytes on stdout\n");
@@ -78,6 +86,7 @@ int main(void)
 	char cmd[0x40], a1[0x40], a2[0x40], a3[0x40];
 
 	while (1) {
+		fputs(PROMPT, stdout);
 		if (!fgets(line, sizeof(line), stdin))
 			break;
 		int n = sscanf(line, "%63s %63s %63s %63s", cmd, a1, a2, a3);
@@ -86,6 +95,8 @@ int main(void)
 
 		if (strcmp(cmd, "malloc") == 0 && n >= 2)
 			cmd_malloc(parse_hex(a1));
+		else if (strcmp(cmd, "calloc") == 0 && n >= 3)
+			cmd_calloc(parse_hex(a1), parse_hex(a2));
 		else if (strcmp(cmd, "free") == 0 && n >= 2)
 			cmd_free(parse_hex(a1));
 		else if (strcmp(cmd, "write") == 0 && n >= 3)
