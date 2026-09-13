@@ -51,7 +51,7 @@ static void cmd_write(uint64_t addr, uint64_t len)
 {
 	void *dst = (void *)(uintptr_t) addr;
 	size_t got = read_exact(dst, len);
-	printf(RESP "wrote %#zx\n", got);
+	printf(RESP "wrote %#zx to %p\n", got, dst);
 }
 
 static void cmd_read(uint64_t addr, uint64_t len)
@@ -60,15 +60,16 @@ static void cmd_read(uint64_t addr, uint64_t len)
 	fwrite((const void *)(uintptr_t) addr, 1, len, stdout);
 }
 
-static void usage(void)
+static void cmd_help(void)
 {
 	printf(RESP
-		"commands (addresses/sizes hex):\n"
+		"ptmalloc playground - all numbers are hex\n"
 		"  malloc <size>\n"
 		"  calloc <nmemb> <size>\n"
 		"  free   <addr>\n"
-		"  write  <addr> <len>   then send <len> raw bytes on stdin\n"
-		"  read   <addr> <len>   emits <len> raw bytes on stdout\n");
+		"  write  <addr> <len>   read <len> raw bytes from stdin into <addr>\n"
+		"  read   <addr> <len>   write <len> raw bytes from <addr> to stdout\n"
+		"  help                  show this message\n");
 }
 
 int main(void)
@@ -103,8 +104,10 @@ int main(void)
 			cmd_write(parse_hex(a1), parse_hex(a2));
 		else if (strcmp(cmd, "read") == 0 && n >= 3)
 			cmd_read(parse_hex(a1), parse_hex(a2));
+		else if (strcmp(cmd, "help") == 0)
+			cmd_help();
 		else
-			usage();
+			printf(RESP "invalid command, type 'help'\n");
 	}
 	return 0;
 }
