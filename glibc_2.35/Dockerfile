@@ -18,6 +18,14 @@ RUN git clone --depth 1 https://github.com/pwndbg/pwndbg /opt/pwndbg \
     && echo "source /opt/pwndbg/gdbinit.py" > /etc/gdb/gdbinit \
     && chown -R user:user /opt/pwndbg
 
+RUN apt-get update && apt-get install -y --no-install-recommends libc6-dbg dpkg-dev \
+    && sed -i -E '/^deb\s/{p;s/^deb/deb-src/}' /etc/apt/sources.list \
+    && apt-get update \
+    && mkdir -p /usr/src/glibc && cd /usr/src/glibc && apt-get source glibc \
+    && test -d /usr/src/glibc/glibc-2.35 \
+    && chown -R user:user /usr/src/glibc \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV LANG=C.UTF-8
 
 WORKDIR /lab
